@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      - dev
+      - demo
   schedule:
     - cron: '0 6,18 * * *'  # Runs at 6:00 AM and 6:00 PM GMT
 
@@ -23,6 +25,17 @@ jobs:
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
 
+    strategy:
+      matrix:
+        branch: [main, dev, demo]
+        include:
+          - branch: main
+            imageName: ghcr.io/roopan-microsoft/psl-cwyd-main:latest
+          - branch: dev
+            imageName: ghcr.io/roopan-microsoft/psl-cwyd-main:dev
+          - branch: demo
+            imageName: ghcr.io/roopan-microsoft/psl-cwyd-main:demo
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -41,10 +54,10 @@ jobs:
           AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
           AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
         with:
-          imageName: ghcr.io/roopan-microsoft/psl-cwyd-main
-          cacheFrom: ghcr.io/roopan-microsoft/psl-cwyd-main
+          imageName: ${{ matrix.imageName }}
+          cacheFrom: ${{ matrix.imageName }}
           runCmd: make ci && make deploy
-          refFilterForPush: refs/heads/main
+          refFilterForPush: refs/heads/${{ matrix.branch }}
           env: |
             AZURE_CLIENT_ID
             AZURE_CLIENT_SECRET
