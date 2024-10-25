@@ -43,8 +43,8 @@ jobs:
           AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
           AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
         with:
-          imageName: ghcr.io/roopan-microsoft/psl-cwyd-main
-          cacheFrom: ghcr.io/roopan-microsoft/psl-cwyd-main
+          imageName: ghcr.io/AjitPadhi-Microsoft/psl-cwyd-main
+          cacheFrom: ghcr.io/AjitPadhi-Microsoft/psl-cwyd-main
           runCmd: make ci && make deploy
           refFilterForPush: ${{ github.ref }}
           env: |
@@ -65,7 +65,7 @@ jobs:
           AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
         with:
           push: never
-          imageName: ghcr.io/roopan-microsoft/psl-cwyd-main
+          imageName: ghcr.io/AjitPadhi-Microsoft/psl-cwyd-main
           runCmd: make destroy
           env: |
             AZURE_CLIENT_ID
