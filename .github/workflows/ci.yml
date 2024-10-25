@@ -48,6 +48,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pre-build image and run make in dev container
+        if: ${{ matrix.branch == github.ref_name }}
         uses: devcontainers/ci@v0.3
         env:
           AZURE_ENV_NAME: ${{ github.run_id }}
