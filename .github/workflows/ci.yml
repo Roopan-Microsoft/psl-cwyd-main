@@ -36,6 +36,17 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set imageTag
+        id: set-image-tag
+        run: |
+          if [[ "${{ github.event_name }}" == "schedule" ]]; then
+            echo "imageTag=latest" >> $GITHUB_ENV
+          elif [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "imageTag=latest" >> $GITHUB_ENV
+          else
+            echo "imageTag=${{ github.ref_name }}" >> $GITHUB_ENV
+          fi
+
       - name: Pre-build image and run make in dev container
         uses: devcontainers/ci@v0.3
         env:
@@ -45,7 +56,7 @@ jobs:
         with:
           imageName: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
           cacheFrom: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
-          imageTag: ${{ github.event_name == 'schedule' && 'main' || github.ref_name }}
+          imageTag: ${{ env.imageTag }}
           runCmd: make ci && make deploy
           refFilterForPush: refs/heads/${{ github.event_name == 'schedule' && 'main' || github.ref_name }}
           env: |
@@ -67,7 +78,7 @@ jobs:
         with:
           push: never
           imageName: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
-          imageTag: ${{ github.event_name == 'schedule' && 'main' || github.ref_name }}
+          imageTag: ${{ env.imageTag }}
           runCmd: make destroy
           env: |
             AZURE_CLIENT_ID
