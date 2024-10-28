@@ -45,8 +45,9 @@ jobs:
         with:
           imageName: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
           cacheFrom: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
+          imageTag: ${{ github.event_name == 'schedule' && 'main' || github.ref_name }}
           runCmd: make ci && make deploy
-          refFilterForPush: ${{ github.ref }}
+          refFilterForPush: refs/heads/${{ github.event_name == 'schedule' && 'main' || github.ref_name }}
           env: |
             AZURE_CLIENT_ID
             AZURE_CLIENT_SECRET
@@ -66,6 +67,7 @@ jobs:
         with:
           push: never
           imageName: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
+          imageTag: ${{ github.event_name == 'schedule' && 'main' || github.ref_name }}
           runCmd: make destroy
           env: |
             AZURE_CLIENT_ID
