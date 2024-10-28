@@ -27,7 +27,7 @@ jobs:
 
     strategy:
       matrix:
-        branch: [main, dev, demo ]
+        branch: [main, dev, demo]
         include:
           - branch: main
             imageName: ghcr.io/roopan-microsoft/psl-cwyd-main:latest
