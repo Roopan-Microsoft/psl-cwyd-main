@@ -26,17 +26,6 @@ jobs:
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
 
-    strategy:
-      matrix:
-        branch: [main, dev, demo]
-        include:
-          - branch: main
-            imageName: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
-          - branch: dev
-            imageName: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
-          - branch: demo
-            imageName: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
-
     steps:
       - name: Checkout code
         if: ${{ matrix.branch == github.ref_name }}
@@ -58,10 +47,11 @@ jobs:
           AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
           AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
         with:
-          imageName: ${{ matrix.imageName }}
-          cacheFrom: ${{ matrix.imageName }}
+          imageName: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
+          cacheFrom: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
+          imageTag: ${{ github.ref_name }}
           runCmd: make ci && make deploy
-          refFilterForPush: refs/heads/${{ matrix.branch }}
+          refFilterForPush: refs/heads/${{ github.ref_name }}
           env: |
             AZURE_CLIENT_ID
             AZURE_CLIENT_SECRET
