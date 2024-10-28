@@ -25,6 +25,17 @@ jobs:
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
 
+    strategy:
+      matrix:
+        branch: [main, dev, demo ]
+        include:
+          - branch: main
+            imageName: ghcr.io/roopan-microsoft/psl-cwyd-main:latest
+          - branch: dev
+            imageName: ghcr.io/roopan-microsoft/psl-cwyd-main:dev
+          - branch: demo
+            imageName: ghcr.io/roopan-microsoft/psl-cwyd-main:demo
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -43,10 +54,10 @@ jobs:
           AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
           AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
         with:
-          imageName: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
-          cacheFrom: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
+          imageName: ghcr.io/roopan-microsoft/psl-cwyd-main
+          cacheFrom: ghcr.io/roopan-microsoft/psl-cwyd-main
           runCmd: make ci && make deploy
-          refFilterForPush: ${{ github.ref }}
+          refFilterForPush: refs/heads/${{ matrix.branch }}
           env: |
             AZURE_CLIENT_ID
             AZURE_CLIENT_SECRET
@@ -65,7 +76,7 @@ jobs:
           AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
         with:
           push: never
-          imageName: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
+          imageName: ghcr.io/roopan-microsoft/psl-cwyd-main
           runCmd: make destroy
           env: |
             AZURE_CLIENT_ID
