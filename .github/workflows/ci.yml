@@ -39,9 +39,11 @@ jobs:
 
     steps:
       - name: Checkout code
+        if: ${{ matrix.branch == github.ref_name }}
         uses: actions/checkout@v4
 
       - name: Login to GitHub Container Registry
+        if: ${{ matrix.branch == github.ref_name }}
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -49,6 +51,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pre-build image and run make in dev container
+        if: ${{ matrix.branch == github.ref_name }}
         uses: devcontainers/ci@v0.3
         env:
           AZURE_ENV_NAME: ${{ github.run_id }}
