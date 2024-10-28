@@ -31,11 +31,11 @@ jobs:
         branch: [main, dev, demo]
         include:
           - branch: main
-            imageName: ghcr.io/roopan-microsoft/psl-cwyd-main
+            imageName: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
           - branch: dev
-            imageName: ghcr.io/roopan-microsoft/psl-cwyd-main
+            imageName: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
           - branch: demo
-            imageName: ghcr.io/roopan-microsoft/psl-cwyd-main
+            imageName: ghcr.io/ajitpadhi-microsoft/psl-cwyd-main
 
     steps:
       - name: Checkout code
