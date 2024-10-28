@@ -18,9 +18,6 @@ on:
       push:
         required: true
         type: boolean
-      environment:
-        required: true
-        type: string
     secrets:
       DOCKER_PASSWORD:
         required: false
@@ -54,7 +51,7 @@ jobs:
         context: .
         file: ${{ inputs.dockerfile }}
         push: ${{ inputs.push }}
-        cache-from: type=registry,ref=${{ inputs.registry }}/${{ inputs.app_name}}:${{ inputs.environment }}
+        cache-from: type=registry,ref=${{ inputs.registry }}/${{ inputs.app_name}}:${{ github.ref_name }}
         tags: |
-          ${{ inputs.registry }}/${{ inputs.app_name}}:${{ inputs.environment }}
+          ${{ inputs.registry }}/${{ inputs.app_name}}:${{ github.ref_name }}
           ${{ inputs.registry }}/${{ inputs.app_name}}:${{ steps.date.outputs.date }}_${{ github.run_number }}
