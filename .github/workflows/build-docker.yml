@@ -45,7 +45,7 @@ jobs:
       id: date
       run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
-    - name: Build Docker Image and optionally push 
+    - name: Build Docker Image and optionally push
       uses: docker/build-push-action@v6
       with:
         context: .
