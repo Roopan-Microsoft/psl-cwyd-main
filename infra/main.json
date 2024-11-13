@@ -3092,6 +3092,67 @@
               "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', format('{0}-app-module', parameters('name')))]"
               ]
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "[format('cosmos-sql-user-role-{0}', format('{0}-app-module', parameters('name')))]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "accountName": {
+                    "value": "[json(parameters('appSettings').AZURE_COSMOSDB_INFO).accountName]"
+                  },
+                  "roleDefinitionId": {
+                    "value": "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions', split(format('{0}/00000000-0000-0000-0000-000000000002', json(parameters('appSettings').AZURE_COSMOSDB_INFO).accountName), '/')[0], split(format('{0}/00000000-0000-0000-0000-000000000002', json(parameters('appSettings').AZURE_COSMOSDB_INFO).accountName), '/')[1])]"
+                  },
+                  "principalId": {
+                    "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-app-module', parameters('name'))), '2022-09-01').outputs.identityPrincipalId.value]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.30.23.60470",
+                      "templateHash": "2622922268469466870"
+                    },
+                    "description": "Creates a SQL role assignment under an Azure Cosmos DB account."
+                  },
+                  "parameters": {
+                    "accountName": {
+                      "type": "string"
+                    },
+                    "roleDefinitionId": {
+                      "type": "string"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments",
+                      "apiVersion": "2022-05-15",
+                      "name": "[format('{0}/{1}', parameters('accountName'), guid(parameters('roleDefinitionId'), parameters('principalId'), resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('accountName'))))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "roleDefinitionId": "[parameters('roleDefinitionId')]",
+                        "scope": "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('accountName'))]"
+                      }
+                    }
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', format('{0}-app-module', parameters('name')))]"
+              ]
             }
           ],
           "outputs": {
@@ -4047,6 +4108,67 @@
                             "permissions": "[parameters('permissions')]"
                           }
                         ]
+                      }
+                    }
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', format('{0}-app-module', parameters('name')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "[format('cosmos-sql-user-role-{0}', format('{0}-app-module', parameters('name')))]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "accountName": {
+                    "value": "[json(parameters('appSettings').AZURE_COSMOSDB_INFO).accountName]"
+                  },
+                  "roleDefinitionId": {
+                    "value": "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions', split(format('{0}/00000000-0000-0000-0000-000000000002', json(parameters('appSettings').AZURE_COSMOSDB_INFO).accountName), '/')[0], split(format('{0}/00000000-0000-0000-0000-000000000002', json(parameters('appSettings').AZURE_COSMOSDB_INFO).accountName), '/')[1])]"
+                  },
+                  "principalId": {
+                    "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-app-module', parameters('name'))), '2022-09-01').outputs.identityPrincipalId.value]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.30.23.60470",
+                      "templateHash": "2622922268469466870"
+                    },
+                    "description": "Creates a SQL role assignment under an Azure Cosmos DB account."
+                  },
+                  "parameters": {
+                    "accountName": {
+                      "type": "string"
+                    },
+                    "roleDefinitionId": {
+                      "type": "string"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments",
+                      "apiVersion": "2022-05-15",
+                      "name": "[format('{0}/{1}', parameters('accountName'), guid(parameters('roleDefinitionId'), parameters('principalId'), resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('accountName'))))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "roleDefinitionId": "[parameters('roleDefinitionId')]",
+                        "scope": "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('accountName'))]"
                       }
                     }
                   ]
@@ -8008,6 +8130,9 @@
                   "dockerFullImageName": {
                     "value": "[parameters('dockerFullImageName')]"
                   },
+                  "useKeyVault": {
+                    "value": "[parameters('useKeyVault')]"
+                  },
                   "appSettings": {
                     "value": "[union(parameters('appSettings'), createObject('WEBSITES_ENABLE_APP_SERVICE_STORAGE', 'false', 'AZURE_AUTH_TYPE', parameters('authType'), 'USE_KEY_VAULT', if(parameters('useKeyVault'), parameters('useKeyVault'), ''), 'AZURE_OPENAI_API_KEY', if(parameters('useKeyVault'), parameters('openAIKeyName'), listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.CognitiveServices/accounts', parameters('azureOpenAIName')), '2023-05-01').key1), 'AZURE_SEARCH_KEY', if(parameters('useKeyVault'), parameters('searchKeyName'), listAdminKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Search/searchServices', parameters('azureAISearchName')), '2021-04-01-preview').primaryKey), 'AZURE_BLOB_ACCOUNT_KEY', if(parameters('useKeyVault'), parameters('storageAccountKeyName'), listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-09-01').keys[0].value), 'AZURE_FORM_RECOGNIZER_KEY', if(parameters('useKeyVault'), parameters('formRecognizerKeyName'), listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.CognitiveServices/accounts', parameters('formRecognizerName')), '2023-05-01').key1), 'AZURE_CONTENT_SAFETY_KEY', if(parameters('useKeyVault'), parameters('contentSafetyKeyName'), listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.CognitiveServices/accounts', parameters('contentSafetyName')), '2023-05-01').key1), 'AZURE_SPEECH_SERVICE_KEY', if(parameters('useKeyVault'), parameters('speechKeyName'), listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.CognitiveServices/accounts', parameters('speechServiceName')), '2023-05-01').key1), 'AZURE_COMPUTER_VISION_KEY', if(or(parameters('useKeyVault'), equals(parameters('computerVisionName'), '')), parameters('computerVisionKeyName'), listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.CognitiveServices/accounts', parameters('computerVisionName')), '2023-05-01').key1)))]"
                   }
@@ -8052,6 +8177,9 @@
                     },
                     "storageAccountName": {
                       "type": "string"
+                    },
+                    "useKeyVault": {
+                      "type": "bool"
                     },
                     "runtimeName": {
                       "type": "string",
@@ -8174,7 +8302,7 @@
                             "value": "[parameters('appServicePlanId')]"
                           },
                           "appSettings": {
-                            "value": "[union(parameters('appSettings'), createObject('AzureWebJobsStorage', format('DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix={2}', parameters('storageAccountName'), listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-09-01').keys[0].value, environment().suffixes.storage), 'FUNCTIONS_EXTENSION_VERSION', parameters('extensionVersion')), if(not(parameters('useDocker')), createObject('FUNCTIONS_WORKER_RUNTIME', parameters('runtimeName')), createObject()))]"
+                            "value": "[union(parameters('appSettings'), createObject('FUNCTIONS_EXTENSION_VERSION', parameters('extensionVersion')), if(not(parameters('useDocker')), createObject('FUNCTIONS_WORKER_RUNTIME', parameters('runtimeName')), createObject()), if(parameters('useKeyVault'), createObject('AzureWebJobsStorage', format('DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix={2}', parameters('storageAccountName'), listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-09-01').keys[0].value, environment().suffixes.storage)), createObject('AzureWebJobsStorage__accountName', parameters('storageAccountName'))))]"
                           },
                           "clientAffinityEnabled": {
                             "value": "[parameters('clientAffinityEnabled')]"
@@ -8503,6 +8631,74 @@
                           }
                         }
                       }
+                    },
+                    {
+                      "type": "Microsoft.Resources/deployments",
+                      "apiVersion": "2022-09-01",
+                      "name": "storage-blob-role-function",
+                      "properties": {
+                        "expressionEvaluationOptions": {
+                          "scope": "inner"
+                        },
+                        "mode": "Incremental",
+                        "parameters": {
+                          "principalId": {
+                            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-functions', parameters('name'))), '2022-09-01').outputs.identityPrincipalId.value]"
+                          },
+                          "roleDefinitionId": {
+                            "value": "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
+                          },
+                          "principalType": {
+                            "value": "ServicePrincipal"
+                          }
+                        },
+                        "template": {
+                          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                          "contentVersion": "1.0.0.0",
+                          "metadata": {
+                            "_generator": {
+                              "name": "bicep",
+                              "version": "0.30.23.60470",
+                              "templateHash": "14973584850527407631"
+                            },
+                            "description": "Creates a role assignment for a service principal."
+                          },
+                          "parameters": {
+                            "principalId": {
+                              "type": "string"
+                            },
+                            "principalType": {
+                              "type": "string",
+                              "defaultValue": "ServicePrincipal",
+                              "allowedValues": [
+                                "Device",
+                                "ForeignGroup",
+                                "Group",
+                                "ServicePrincipal",
+                                "User"
+                              ]
+                            },
+                            "roleDefinitionId": {
+                              "type": "string"
+                            }
+                          },
+                          "resources": [
+                            {
+                              "type": "Microsoft.Authorization/roleAssignments",
+                              "apiVersion": "2022-04-01",
+                              "name": "[guid(subscription().id, resourceGroup().id, parameters('principalId'), parameters('roleDefinitionId'))]",
+                              "properties": {
+                                "principalId": "[parameters('principalId')]",
+                                "principalType": "[parameters('principalType')]",
+                                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleDefinitionId'))]"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "dependsOn": [
+                        "[resourceId('Microsoft.Resources/deployments', format('{0}-functions', parameters('name')))]"
+                      ]
                     }
                   ],
                   "outputs": {
@@ -9253,6 +9449,9 @@
                   "dockerFullImageName": {
                     "value": "[parameters('dockerFullImageName')]"
                   },
+                  "useKeyVault": {
+                    "value": "[parameters('useKeyVault')]"
+                  },
                   "appSettings": {
                     "value": "[union(parameters('appSettings'), createObject('WEBSITES_ENABLE_APP_SERVICE_STORAGE', 'false', 'AZURE_AUTH_TYPE', parameters('authType'), 'USE_KEY_VAULT', if(parameters('useKeyVault'), parameters('useKeyVault'), ''), 'AZURE_OPENAI_API_KEY', if(parameters('useKeyVault'), parameters('openAIKeyName'), listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.CognitiveServices/accounts', parameters('azureOpenAIName')), '2023-05-01').key1), 'AZURE_SEARCH_KEY', if(parameters('useKeyVault'), parameters('searchKeyName'), listAdminKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Search/searchServices', parameters('azureAISearchName')), '2021-04-01-preview').primaryKey), 'AZURE_BLOB_ACCOUNT_KEY', if(parameters('useKeyVault'), parameters('storageAccountKeyName'), listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-09-01').keys[0].value), 'AZURE_FORM_RECOGNIZER_KEY', if(parameters('useKeyVault'), parameters('formRecognizerKeyName'), listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.CognitiveServices/accounts', parameters('formRecognizerName')), '2023-05-01').key1), 'AZURE_CONTENT_SAFETY_KEY', if(parameters('useKeyVault'), parameters('contentSafetyKeyName'), listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.CognitiveServices/accounts', parameters('contentSafetyName')), '2023-05-01').key1), 'AZURE_SPEECH_SERVICE_KEY', if(parameters('useKeyVault'), parameters('speechKeyName'), listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.CognitiveServices/accounts', parameters('speechServiceName')), '2023-05-01').key1), 'AZURE_COMPUTER_VISION_KEY', if(or(parameters('useKeyVault'), equals(parameters('computerVisionName'), '')), parameters('computerVisionKeyName'), listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.CognitiveServices/accounts', parameters('computerVisionName')), '2023-05-01').key1)))]"
                   }
@@ -9297,6 +9496,9 @@
                     },
                     "storageAccountName": {
                       "type": "string"
+                    },
+                    "useKeyVault": {
+                      "type": "bool"
                     },
                     "runtimeName": {
                       "type": "string",
@@ -9419,7 +9621,7 @@
                             "value": "[parameters('appServicePlanId')]"
                           },
                           "appSettings": {
-                            "value": "[union(parameters('appSettings'), createObject('AzureWebJobsStorage', format('DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix={2}', parameters('storageAccountName'), listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-09-01').keys[0].value, environment().suffixes.storage), 'FUNCTIONS_EXTENSION_VERSION', parameters('extensionVersion')), if(not(parameters('useDocker')), createObject('FUNCTIONS_WORKER_RUNTIME', parameters('runtimeName')), createObject()))]"
+                            "value": "[union(parameters('appSettings'), createObject('FUNCTIONS_EXTENSION_VERSION', parameters('extensionVersion')), if(not(parameters('useDocker')), createObject('FUNCTIONS_WORKER_RUNTIME', parameters('runtimeName')), createObject()), if(parameters('useKeyVault'), createObject('AzureWebJobsStorage', format('DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix={2}', parameters('storageAccountName'), listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-09-01').keys[0].value, environment().suffixes.storage)), createObject('AzureWebJobsStorage__accountName', parameters('storageAccountName'))))]"
                           },
                           "clientAffinityEnabled": {
                             "value": "[parameters('clientAffinityEnabled')]"
@@ -9748,6 +9950,74 @@
                           }
                         }
                       }
+                    },
+                    {
+                      "type": "Microsoft.Resources/deployments",
+                      "apiVersion": "2022-09-01",
+                      "name": "storage-blob-role-function",
+                      "properties": {
+                        "expressionEvaluationOptions": {
+                          "scope": "inner"
+                        },
+                        "mode": "Incremental",
+                        "parameters": {
+                          "principalId": {
+                            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-functions', parameters('name'))), '2022-09-01').outputs.identityPrincipalId.value]"
+                          },
+                          "roleDefinitionId": {
+                            "value": "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
+                          },
+                          "principalType": {
+                            "value": "ServicePrincipal"
+                          }
+                        },
+                        "template": {
+                          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                          "contentVersion": "1.0.0.0",
+                          "metadata": {
+                            "_generator": {
+                              "name": "bicep",
+                              "version": "0.30.23.60470",
+                              "templateHash": "14973584850527407631"
+                            },
+                            "description": "Creates a role assignment for a service principal."
+                          },
+                          "parameters": {
+                            "principalId": {
+                              "type": "string"
+                            },
+                            "principalType": {
+                              "type": "string",
+                              "defaultValue": "ServicePrincipal",
+                              "allowedValues": [
+                                "Device",
+                                "ForeignGroup",
+                                "Group",
+                                "ServicePrincipal",
+                                "User"
+                              ]
+                            },
+                            "roleDefinitionId": {
+                              "type": "string"
+                            }
+                          },
+                          "resources": [
+                            {
+                              "type": "Microsoft.Authorization/roleAssignments",
+                              "apiVersion": "2022-04-01",
+                              "name": "[guid(subscription().id, resourceGroup().id, parameters('principalId'), parameters('roleDefinitionId'))]",
+                              "properties": {
+                                "principalId": "[parameters('principalId')]",
+                                "principalType": "[parameters('principalType')]",
+                                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleDefinitionId'))]"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "dependsOn": [
+                        "[resourceId('Microsoft.Resources/deployments', format('{0}-functions', parameters('name')))]"
+                      ]
                     }
                   ],
                   "outputs": {
@@ -10638,6 +10908,9 @@
           "location": {
             "value": "[variables('location')]"
           },
+          "useKeyVault": {
+            "value": "[parameters('useKeyVault')]"
+          },
           "sku": {
             "value": {
               "name": "Standard_GRS"
@@ -10707,9 +10980,12 @@
               "type": "bool",
               "defaultValue": true
             },
+            "useKeyVault": {
+              "type": "bool"
+            },
             "allowSharedKeyAccess": {
               "type": "bool",
-              "defaultValue": true
+              "defaultValue": "[parameters('useKeyVault')]"
             },
             "containers": {
               "type": "array",
@@ -10868,7 +11144,7 @@
       }
     },
     {
-      "condition": "[equals(parameters('authType'), 'rbac')]",
+      "condition": "[and(equals(parameters('authType'), 'rbac'), not(equals(parameters('principalId'), '')))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "storage-role-user",
@@ -10934,7 +11210,7 @@
       }
     },
     {
-      "condition": "[equals(parameters('authType'), 'rbac')]",
+      "condition": "[and(equals(parameters('authType'), 'rbac'), not(equals(parameters('principalId'), '')))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "openai-role-user",
@@ -11000,7 +11276,7 @@
       }
     },
     {
-      "condition": "[equals(parameters('authType'), 'rbac')]",
+      "condition": "[and(equals(parameters('authType'), 'rbac'), not(equals(parameters('principalId'), '')))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "openai-role-user-contributor",
@@ -11066,7 +11342,7 @@
       }
     },
     {
-      "condition": "[equals(parameters('authType'), 'rbac')]",
+      "condition": "[and(equals(parameters('authType'), 'rbac'), not(equals(parameters('principalId'), '')))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "search-role-user",
