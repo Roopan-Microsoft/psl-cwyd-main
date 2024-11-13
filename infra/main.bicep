@@ -631,7 +631,7 @@ module web_docker './app/web.bicep' = if (hostingModel == 'container') {
     name: '${websiteName}-docker'
     location: location
     tags: union(tags, { 'azd-service-name': 'web-docker' })
-    dockerFullImageName: 'fruoccopublic.azurecr.io/rag-webapp:${branch == 'main' ? 'latest' : branch}'
+    dockerFullImageName: branch == 'main' ? 'fruoccopublic.azurecr.io/rag-webapp:latest' : 'cwydcontainerreg.azurecr.io/rag-webapp:${branch}'
     appServicePlanId: hostingplan.outputs.name
     applicationInsightsName: monitoring.outputs.applicationInsightsName
     healthCheckPath: '/api/health'
@@ -791,7 +791,7 @@ module adminweb_docker './app/adminweb.bicep' = if (hostingModel == 'container')
     name: '${adminWebsiteName}-docker'
     location: location
     tags: union(tags, { 'azd-service-name': 'adminweb-docker' })
-    dockerFullImageName: 'fruoccopublic.azurecr.io/rag-adminwebapp:${branch == 'main' ? 'latest' : branch}'
+    dockerFullImageName: branch == 'main' ? 'fruoccopublic.azurecr.io/rag-adminwebapp:latest' : 'cwydcontainerreg.azurecr.io/rag-adminwebapp:${branch}'
     appServicePlanId: hostingplan.outputs.name
     applicationInsightsName: monitoring.outputs.applicationInsightsName
     azureOpenAIName: openai.outputs.name
@@ -966,7 +966,7 @@ module function_docker './app/function.bicep' = if (hostingModel == 'container')
     name: '${functionName}-docker'
     location: location
     tags: union(tags, { 'azd-service-name': 'function-docker' })
-    dockerFullImageName: 'fruoccopublic.azurecr.io/rag-backend:${branch == 'main' ? 'latest' : branch}'
+    dockerFullImageName: branch == 'main' ? 'fruoccopublic.azurecr.io/rag-backend:latest' : 'cwydcontainerreg.azurecr.io/rag-backend:${branch}'
     appServicePlanId: hostingplan.outputs.name
     applicationInsightsName: monitoring.outputs.applicationInsightsName
     azureOpenAIName: openai.outputs.name
