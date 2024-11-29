@@ -1,0 +1,23 @@
+[MASTER]
+ignore=venv,migrations,_pycache_,node_modules
+persistent=yes
+max-line-length=120
+
+[MESSAGES CONTROL]
+disable=C0114,C0115,C0116,R0801 # Disable missing docstrings for modules, classes, and functions
+
+[FORMAT]
+max-line-length=120
+indent-string='    '
+
+[DESIGN]
+max-args=5
+max-nested-blocks=4
+max-statements=50
+
+[LOGGING]
+logging-format-style=new
+
+[REPORTS]
+reports=no
+score=yes
