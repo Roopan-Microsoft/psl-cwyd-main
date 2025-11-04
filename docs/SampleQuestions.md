@@ -2,6 +2,8 @@
 
 To help you get started, here are some **Sample Prompts** you can ask in the app:
 
+> Note: On the Admin webpage, ensure that the files have been uploaded from [here](../data) and processed successfully before proceeding with the sample prompts.
+
 ### **Chat with Your Data**
 
 ![cwyd-sampledata](images/cwyd-sampledata.png)
